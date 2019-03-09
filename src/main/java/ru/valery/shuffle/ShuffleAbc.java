@@ -94,14 +94,15 @@ public class ShuffleAbc extends Application {
 	private Pane createContent() throws UnsupportedEncodingException{
 		final Pane root = new Pane();
 		Locale locale = Locale.ENGLISH;
-//		Locale locale = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
 		root.setPrefSize(NUM_PER_ROWS * SQUARE_SIZE, NUM_OF_PAIRS / NUM_PER_ROWS * 2 * SQUARE_SIZE);
 		ResourceBundle bundle = ResourceBundle.getBundle("fruits", locale);
+		ResourceBundle bundleRu = ResourceBundle.getBundle("fruits");
 		List<Tile> tiles = new ArrayList<>();
 		for (int i = 0; i < NUM_OF_PAIRS; i++) {
-			String fruitName = new String(new String(bundle.getString("fruit." + (i+1)).getBytes("ISO-8859-1"), "UTF-8"));
-			tiles.add(new Tile(fruitName, IMAGES[i]));
-			tiles.add(new Tile(fruitName, IMAGES[i]));
+			String fruitName = new String(bundle.getString("fruit." + (i + 1)).getBytes("ISO-8859-1"), "UTF-8");
+			String fruitNameRu = new String(bundleRu.getString("fruit." + (i + 1)).getBytes("ISO-8859-1"), "UTF-8");
+			tiles.add(new Tile(String.valueOf(i), fruitName, IMAGES[i]));
+			tiles.add(new Tile(String.valueOf(i), fruitNameRu, IMAGES[i]));
 		}
 		Collections.shuffle(tiles);
 
@@ -124,8 +125,10 @@ public class ShuffleAbc extends Application {
 		private final ImagePattern image;
 		private final FadeTransition ftOpen;
 		private final FadeTransition ftClose;
+		private final String key;
 
-		Tile(final String value, final Image image) {
+		Tile(final String key, final String value, final Image image) {
+			this.key = key;
 			this.image = new ImagePattern(image);
 			border.setFill(null);
 			border.setStroke(Color.BLACK);
@@ -186,7 +189,7 @@ public class ShuffleAbc extends Application {
 		}
 
 		private boolean hasSaveValue(final Tile other) {
-			return text.getText().equals(other.text.getText());
+			return key.equals(other.getKey());
 		}
 
 		private void open(final Runnable action) {
@@ -196,6 +199,9 @@ public class ShuffleAbc extends Application {
 
 		private void close() {
 			ftClose.play();
+		}
+		public String getKey(){
+			return key;
 		}
 	}
 
