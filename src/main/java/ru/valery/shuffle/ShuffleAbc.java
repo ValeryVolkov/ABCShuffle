@@ -21,33 +21,21 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.awt.EventQueue;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class ShuffleAbc extends Application {
-	private static final int NUM_OF_PAIRS = 8;
+	private static final int NUM_OF_PAIRS = 12;
 	private static final int NUM_PER_ROWS = 4;
 	private static final int SQUARE_SIZE = 64;
 	private static final Image[] IMAGES = new Image[20];
-	private static final String[] NAMES = {
-			"Лимон",
-			"Виноград",
-			"Клубника",
-			"Персик",
-			"Абрикос",
-			"Слива",
-			"Груша",
-			"Орех",
-			"Банан",
-			"Яблоко",
-			"Малина",
-			"Морошка",
-			"Грейпфрут",
-	};
 
 	static {
 		initImages();
@@ -91,8 +79,9 @@ public class ShuffleAbc extends Application {
 	}
 
 	@Override
-	public void start(final Stage primaryStage) {
+	public void start(final Stage primaryStage) throws UnsupportedEncodingException{
 		primaryStage.setScene(new Scene(createContent()));
+		primaryStage.setTitle("Найди пару");
 		primaryStage.show();
 
 	}
@@ -102,13 +91,17 @@ public class ShuffleAbc extends Application {
 	 *
 	 * @return Панель
 	 */
-	private Pane createContent() {
+	private Pane createContent() throws UnsupportedEncodingException{
 		final Pane root = new Pane();
+		Locale locale = Locale.ENGLISH;
+//		Locale locale = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
 		root.setPrefSize(NUM_PER_ROWS * SQUARE_SIZE, NUM_OF_PAIRS / NUM_PER_ROWS * 2 * SQUARE_SIZE);
+		ResourceBundle bundle = ResourceBundle.getBundle("fruits", locale);
 		List<Tile> tiles = new ArrayList<>();
 		for (int i = 0; i < NUM_OF_PAIRS; i++) {
-			tiles.add(new Tile(NAMES[i], IMAGES[i]));
-			tiles.add(new Tile(NAMES[i], IMAGES[i]));
+			String fruitName = new String(new String(bundle.getString("fruit." + (i+1)).getBytes("ISO-8859-1"), "UTF-8"));
+			tiles.add(new Tile(fruitName, IMAGES[i]));
+			tiles.add(new Tile(fruitName, IMAGES[i]));
 		}
 		Collections.shuffle(tiles);
 
@@ -137,7 +130,7 @@ public class ShuffleAbc extends Application {
 			border.setFill(null);
 			border.setStroke(Color.BLACK);
 
-			text.setText(value);
+			text.setText(String.format("%9.9s",value));
 			text.setFont(Font.font(10));
 			text.setEffect(new Shadow(1.5, Color.BLACK));
 			setAlignment(Pos.BOTTOM_RIGHT);
