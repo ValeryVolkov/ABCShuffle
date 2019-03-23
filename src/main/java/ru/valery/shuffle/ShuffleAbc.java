@@ -99,8 +99,8 @@ public class ShuffleAbc extends Application {
 		ResourceBundle bundleRu = ResourceBundle.getBundle("fruits");
 		List<Tile> tiles = new ArrayList<>();
 		for (int i = 0; i < NUM_OF_PAIRS; i++) {
-			String fruitName = new String(bundle.getString("fruit." + (i + 1)).getBytes("ISO-8859-1"), "UTF-8");
-			String fruitNameRu = new String(bundleRu.getString("fruit." + (i + 1)).getBytes("ISO-8859-1"), "UTF-8");
+			String fruitName = new String(bundle.getString("fruit." + (i + 1)));
+			String fruitNameRu = new String(bundleRu.getString("fruit." + (i + 1)));
 			tiles.add(new Tile(String.valueOf(i), fruitName, IMAGES[i]));
 			tiles.add(new Tile(String.valueOf(i), fruitNameRu, IMAGES[i]));
 		}
