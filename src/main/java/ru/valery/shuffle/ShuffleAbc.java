@@ -41,20 +41,6 @@ public class ShuffleAbc extends Application {
 		initImages();
 	}
 
-	private void playMedia(String path) {
-		try {
-			URI uri = ShuffleAbc.class.getClassLoader().getResource(path).toURI();
-			Media hit = new Media(uri.toString());
-			MediaPlayer mediaPlayer = new MediaPlayer(hit);
-			mediaPlayer.setStopTime(Duration.seconds(0));
-			mediaPlayer.setStopTime(Duration.seconds(1.5));
-			mediaPlayer.play();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 
 	private Tile selected = null;
 	private int clickCount = 2;
@@ -67,10 +53,12 @@ public class ShuffleAbc extends Application {
 
 		try {
 			final URL url = ShuffleAbc.class.getClassLoader().getResource("ru/valery/shuffle/L.jpeg");
-			final Image image = new Image(url.toString());
-			for (int i = 0; i < 4; i++) {
-				for (int j = 0; j < 5; j++) {
-					IMAGES[i + j * 4] = new WritableImage(image.getPixelReader(), i * 75, j * 60, 75, 60);
+			if (url != null) {
+				final Image image = new Image(url.toString());
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 5; j++) {
+						IMAGES[i + j * 4] = new WritableImage(image.getPixelReader(), i * 75, j * 60, 75, 60);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -79,7 +67,7 @@ public class ShuffleAbc extends Application {
 	}
 
 	@Override
-	public void start(final Stage primaryStage) throws UnsupportedEncodingException{
+	public void start(final Stage primaryStage) {
 		primaryStage.setScene(new Scene(createContent()));
 		primaryStage.setTitle("Найди пару");
 		primaryStage.show();
@@ -91,7 +79,7 @@ public class ShuffleAbc extends Application {
 	 *
 	 * @return Панель
 	 */
-	private Pane createContent() throws UnsupportedEncodingException{
+	private Pane createContent(){
 		final Pane root = new Pane();
 		Locale locale = Locale.ENGLISH;
 		root.setPrefSize(NUM_PER_ROWS * SQUARE_SIZE, NUM_OF_PAIRS / NUM_PER_ROWS * 2 * SQUARE_SIZE);
@@ -99,8 +87,8 @@ public class ShuffleAbc extends Application {
 		ResourceBundle bundleRu = ResourceBundle.getBundle("fruits");
 		List<Tile> tiles = new ArrayList<>();
 		for (int i = 0; i < NUM_OF_PAIRS; i++) {
-			String fruitName = new String(bundle.getString("fruit." + (i + 1)));
-			String fruitNameRu = new String(bundleRu.getString("fruit." + (i + 1)));
+			String fruitName = bundle.getString("fruit." + (i + 1));
+			String fruitNameRu = bundleRu.getString("fruit." + (i + 1));
 			tiles.add(new Tile(String.valueOf(i), fruitName, IMAGES[i]));
 			tiles.add(new Tile(String.valueOf(i), fruitNameRu, IMAGES[i]));
 		}
@@ -133,7 +121,7 @@ public class ShuffleAbc extends Application {
 			border.setFill(null);
 			border.setStroke(Color.BLACK);
 
-			text.setText(String.format("%9.9s",value));
+			text.setText(String.format("%9.9s", value));
 			text.setFont(Font.font(10));
 			text.setEffect(new Shadow(1.5, Color.BLACK));
 			setAlignment(Pos.BOTTOM_RIGHT);
@@ -174,7 +162,7 @@ public class ShuffleAbc extends Application {
 						selected.close();
 						this.close();
 					} else {
-						EventQueue.invokeLater(()-> {
+						EventQueue.invokeLater(() -> {
 							playMedia("ru/valery/shuffle/S.mp3");
 						});
 					}
@@ -183,7 +171,19 @@ public class ShuffleAbc extends Application {
 				});
 			}
 		}
+		private void playMedia(String path) {
+			try {
+				URI uri = ShuffleAbc.class.getClassLoader().getResource(path).toURI();
+				Media hit = new Media(uri.toString());
+				MediaPlayer mediaPlayer = new MediaPlayer(hit);
+				mediaPlayer.setStopTime(Duration.seconds(0));
+				mediaPlayer.setStopTime(Duration.seconds(1.5));
+				mediaPlayer.play();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
 
+		}
 		private boolean isOpen() {
 			return text.getOpacity() == 1;
 		}
@@ -200,7 +200,8 @@ public class ShuffleAbc extends Application {
 		private void close() {
 			ftClose.play();
 		}
-		public String getKey(){
+
+		String getKey() {
 			return key;
 		}
 	}
